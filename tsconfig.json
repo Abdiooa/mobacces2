@@ -11,5 +11,5 @@
   "include": [
     "**/*.ts",
     "**/*.tsx"
-  ]
+, "components/MobileIDAuth.tsx", "components/HomePage.tsx", "components/AvecMobile.tsx", "components/Sans.tsx"  ]
 }

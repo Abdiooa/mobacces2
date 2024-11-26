@@ -9,13 +9,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import backgroundImage from "../assets/images/page-ac.jpeg";
-const Greeting = () => {
-  const navigation = useNavigation();
+import { RootStackParamList } from "@/constant/types";
+
+type HomePageNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
+
+const HomePage = () => {
+  const navigation = useNavigation<HomePageNavigationProp>();
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style={styles.st} />
+      <StatusBar barStyle="dark-content" />
       <ImageBackground
         source={backgroundImage}
         resizeMode="cover"
@@ -29,14 +34,14 @@ const Greeting = () => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("AvecMobile")}
+              onPress={() => navigation.navigate("LoginId")}
             >
               <Text style={styles.buttonText}>Avec Mobile ID</Text>
             </TouchableOpacity>
             <Text style={styles.middleText}>Ou</Text>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("Sans")}
+              onPress={() => navigation.navigate("ALogin")}
             >
               <Text style={styles.buttonText}>SANS</Text>
             </TouchableOpacity>
@@ -47,26 +52,12 @@ const Greeting = () => {
   );
 };
 
-export default Greeting;
+export default HomePage;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  imbac: {
-    // justifyContent: "center",
-    // alignItems: "center",
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  container: { flex: 1, width: "100%", height: "100%" },
+  imbac: { flex: 1, width: "100%", height: "100%" },
+  contentContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   boldItalicText: {
     fontSize: 20,
     fontWeight: "bold",
@@ -99,8 +90,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-  middleText: {
-    fontSize: 18,
-    fontWeight: "500",
-  },
+  middleText: { fontSize: 18, fontWeight: "500", marginVertical: 10 },
 });

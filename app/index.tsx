@@ -3,12 +3,13 @@ import {
   NavigationContainer,
   NavigationIndependentTree,
 } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import Greeting from "../components/Greetings"; // Your Greeting component
-import AvecMobile from "../components/AvecMobile"; // Add your AvecMobile screen
-import Sans from "../components/Sans"; // Add your Sans screen
 
-// Create Stack Navigator
+import { createStackNavigator } from "@react-navigation/stack";
+import HomePage from "@/components/HomePage";
+import AvecMobile from "@/components/AvecMobile";
+import Sans from "@/components/Sans";
+import MobileIDAuth from "@/components/MobileIDAuth";
+
 const Stack = createStackNavigator();
 
 export default function Index() {
@@ -16,12 +17,13 @@ export default function Index() {
     <NavigationIndependentTree>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Greeting"
+          initialRouteName="HomePage"
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="Greeting" component={Greeting} />
-          <Stack.Screen name="AvecMobile" component={AvecMobile} />
-          <Stack.Screen name="Sans" component={Sans} />
+          <Stack.Screen name="HomePage" component={HomePage} />
+          <Stack.Screen name="LoginIde" component={AvecMobile} />
+          <Stack.Screen name="ALogin" component={Sans} />
+          <Stack.Screen name="LoginId" component={MobileIDAuth} />
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

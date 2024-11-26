@@ -2,9 +2,9 @@
   "expo": {
     "name": "mobaccess2",
     "slug": "mobaccess2",
+    "scheme": "mobacces2",
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
