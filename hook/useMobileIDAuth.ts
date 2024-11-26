@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios, { AxiosRequestConfig } from "axios";
 
 interface UseMobileIDAuthProps {
@@ -12,7 +12,6 @@ const useMobileIDAuth = ({ endpoint, body, headers = {} }: UseMobileIDAuthProps)
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>(null);
   const [status, setStatus] = useState<string | null>(null);
-
 
   const finalHeaders = {
     "Content-Type": "application/json",
@@ -40,10 +39,6 @@ const useMobileIDAuth = ({ endpoint, body, headers = {} }: UseMobileIDAuthProps)
       setIsLoading(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (body) authenticate();
-  // }, [body, endpoint]);
 
   const refetch = (newBody: Record<string, any> = body, newHeaders: Record<string, string> = headers) => {
     options.data = newBody;
