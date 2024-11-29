@@ -9,6 +9,7 @@ import HomePage from "@/components/HomePage";
 import AvecMobile from "@/components/AvecMobile";
 import Sans from "@/components/Sans";
 import MobileIDAuth from "@/components/MobileIDAuth";
+import Acceuil from "@/components/Acceuil";
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ export default function Index() {
         >
           <Stack.Screen name="HomePage" component={HomePage} />
           <Stack.Screen name="LoginIde" component={AvecMobile} />
-          <Stack.Screen name="ALogin" component={Sans} />
+          <Stack.Screen name="Acceuil" component={Acceuil} />
           <Stack.Screen name="LoginId" component={MobileIDAuth} />
         </Stack.Navigator>
       </NavigationContainer>
