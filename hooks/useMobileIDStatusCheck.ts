@@ -29,7 +29,7 @@ const useMobileIDStatusCheck = () => {
         // return true;
         throw new Error(response.data.message || "Status check failed.");
       }
-      await new Promise((resolve) => setTimeout(resolve, 20000)); // Wait before retrying
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   };
 

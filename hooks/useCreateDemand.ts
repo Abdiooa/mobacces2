@@ -1,15 +1,18 @@
-// hooks/useCreateDemand.ts
 import { useState } from 'react';
 import { apiRequest } from '../utils/api';
 
 interface CreateDemandParams {
     userId: string;
     requestType: string;
+    demandDescription: string; // Added demandDescription here
+    requiredDocuments: string;
 }
 
 interface CreateDemandResponse {
     userId: string;
     requestType: string;
+    demandDescription: string;
+    requiredDocuments: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -19,13 +22,23 @@ const useCreateDemand = () => {
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<CreateDemandResponse | null>(null);
 
-    const createDemand = async ({ userId, requestType }: CreateDemandParams) => {
+    const createDemand = async ({ userId, requestType, demandDescription, requiredDocuments }: CreateDemandParams) => {
         setLoading(true);
         setError(null);
+        console.log(userId);
+        console.log(requestType);
+        console.log(demandDescription);
+        console.log(requiredDocuments);
 
         try {
-            const response = await apiRequest<CreateDemandResponse>('/post', 'POST', { userId, requestType });
+            const response = await apiRequest<CreateDemandResponse>('/post', 'POST', {
+                userId,
+                requestType,
+                demandDescription, // Pass demandDescription to the API
+                requiredDocuments, // Pass requiredDocuments to the API
+            });
             setData(response);
+            console.log(response);
         } catch (err: any) {
             setError(err.message);
         } finally {

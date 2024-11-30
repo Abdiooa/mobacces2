@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Alert, // Import Alert for notifications
 } from "react-native";
 import DemandForm from "./DemandForm"; // Import the DemandForm component
 
@@ -18,9 +19,33 @@ const AdminService = () => {
     name: string;
     type: string;
     requiredDocuments: string;
+    demandDescription: string;
     status: string;
   }) => {
+    // Simple validation check
+    if (
+      !newRequest.name ||
+      !newRequest.type ||
+      !newRequest.requiredDocuments ||
+      !newRequest.demandDescription
+    ) {
+      // Show an error alert if any required field is missing
+      Alert.alert(
+        "Erreur",
+        "Tous les champs doivent être remplis pour créer une demande.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    // If validation passes, add the request to the list
     setRequests([...requests, newRequest]);
+
+    // Show a success alert
+    Alert.alert("Succès", "La demande a été créée avec succès.", [
+      { text: "OK" },
+    ]);
+
     setViewMode("menu"); // Go back to menu after creating request
   };
 
@@ -54,7 +79,7 @@ const AdminService = () => {
         {/* Create new request form */}
         {viewMode === "create" && (
           <DemandForm
-            onCreateRequest={handleCreateRequest}
+            onCreateRequest={handleCreateRequest} // Pass the correct handler function
             onCancel={() => setViewMode("menu")}
           />
         )}
@@ -112,7 +137,13 @@ const AdminService = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
+  },
+  scrollContainer: {
+    padding: 20,
+  },
+  menuContainer: {
+    marginTop: 20,
   },
   title: {
     fontSize: 22,
@@ -121,23 +152,43 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   linkButton: {
-    padding: 15,
+    padding: 10,
     backgroundColor: "#007AFF",
-    marginVertical: 10,
     borderRadius: 5,
-  },
-  scrollContainer: {
-    paddingBottom: 20, // To prevent content from being cut off when scrolled
+    marginBottom: 10,
   },
   linkText: {
     color: "#fff",
+    textAlign: "center",
+    fontSize: 18,
+  },
+  requestsContainer: {
+    marginTop: 20,
+  },
+  noRequestsText: {
+    color: "gray",
     fontSize: 18,
     textAlign: "center",
+  },
+  requestItem: {
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  requestText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  statusText: {
+    color: "gray",
+    fontSize: 16,
   },
   cancelButton: {
     padding: 15,
     backgroundColor: "#ddd",
-    marginTop: 10,
+    marginTop: 20,
     borderRadius: 5,
   },
   cancelButtonText: {
@@ -145,39 +196,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
   },
-  menuContainer: {
-    padding: 20,
-    backgroundColor: "#fff",
-  },
-  requestsContainer: {
-    padding: 20,
-    backgroundColor: "#fff",
-  },
-  requestItem: {
-    padding: 15,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
-    marginVertical: 5,
-  },
-  requestText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statusText: {
-    fontSize: 14,
-    color: "#555",
-  },
-  noRequestsText: {
-    fontSize: 16,
-    color: "#555",
-  },
   selectedRequestContainer: {
-    padding: 20,
-    backgroundColor: "#fff",
+    marginTop: 20,
   },
   detailText: {
-    fontSize: 16,
-    marginVertical: 5,
+    fontSize: 18,
+    marginVertical: 10,
   },
 });
 

@@ -42,7 +42,7 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
       case "home":
         return (
           <View style={styles.profileContainer}>
-            <Text style={styles.greetingText}>Hey, Zahra Ali</Text>
+            <Text style={styles.greetingText}>Hey, Zahra Ali Batoum</Text>
             <Text style={styles.profileContentText}>
               Welcome to the platform! Select a service from the menu.
             </Text>
