@@ -15,6 +15,7 @@ import {
   MenuOption,
 } from "react-native-popup-menu"; // Import MenuProvider and other components
 import AdminService from "./AdminService"; // Import the AdminService component
+import SignDeaf from "../components/securityUrgenc/SignDeaf";
 
 const Acceuil = ({ navigation }: { navigation: any }) => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -40,6 +41,8 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
   // Function to render the content of the selected service
   const renderServiceContent = () => {
     switch (selectedService) {
+      case "emergency":
+        return <SignDeaf />;
       case "admin":
         return <AdminService />;
       case "home":
