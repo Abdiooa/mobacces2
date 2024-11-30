@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // For icons
 import {
   Menu,
@@ -7,17 +13,16 @@ import {
   MenuTrigger,
   MenuOptions,
   MenuOption,
-  renderers,
 } from "react-native-popup-menu"; // Import MenuProvider and other components
 import AdminService from "./AdminService"; // Import the AdminService component
 
 const Acceuil = ({ navigation }: { navigation: any }) => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
+  const menuTranslateX = useState(new Animated.Value(-250))[0]; // For sliding the menu
 
   // Services and their keys
   const services = [
-    // { name: "Home", key: "home" },
     { name: "Gestion des démarches administratives", key: "admin" },
     { name: "Coordination médicale et bien-être", key: "health" },
     { name: "Insertion professionnelle et sociale", key: "career" },
@@ -28,17 +33,15 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
 
   // Function to handle service selection
   const handleServiceClick = (serviceKey: string) => {
-    console.log("Selected Service:", serviceKey); // Debug
     setSelectedService(serviceKey); // Update selected service
-    setMenuVisible(false); // Close menu after service selection
+    closeMenu(); // Close menu after service selection
   };
 
   // Function to render the content of the selected service
   const renderServiceContent = () => {
-    console.log("Rendering content for service:", selectedService); // Debug
     switch (selectedService) {
       case "admin":
-        return <AdminService />; // Render AdminService when "admin" is selected
+        return <AdminService />;
       case "home":
         return (
           <View style={styles.profileContainer}>
@@ -51,7 +54,7 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
       default:
         return (
           <View style={styles.profileContainer}>
-            <Text style={styles.greetingText}>Hey, Zahra Ali</Text>
+            <Text style={styles.greetingText}>Hey, Zahra Ali Batoum</Text>
             <Text style={styles.profileContentText}>
               Welcome to the platform! Select a service from the menu.
             </Text>
@@ -61,7 +64,23 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
   };
 
   const closeMenu = () => {
-    setMenuVisible(false);
+    // Animate menu sliding out
+    Animated.timing(menuTranslateX, {
+      toValue: -250,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setMenuVisible(false); // Close menu state
+  };
+
+  const openMenu = () => {
+    // Animate menu sliding in
+    Animated.timing(menuTranslateX, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setMenuVisible(true); // Open menu state
   };
 
   return (
@@ -69,44 +88,47 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
       <View style={styles.container}>
         {/* Top Bar */}
         <View style={styles.topBar}>
-          <Menu
-            opened={menuVisible} // Control menu visibility
-            onBackdropPress={closeMenu} // Close menu on backdrop press
-          >
-            <MenuTrigger onPress={() => setMenuVisible(true)}>
-              <Ionicons name="menu" size={30} color="#fff" />
-            </MenuTrigger>
-            <MenuOptions customStyles={{ optionWrapper: styles.menuOptions }}>
-              {/* Close Icon */}
-              <TouchableOpacity style={styles.closeButton} onPress={closeMenu}>
-                <Ionicons name="close" size={30} color="#007AFF" />
-              </TouchableOpacity>
-
-              {/* Home Link */}
-              <MenuOption onSelect={() => handleServiceClick("home")}>
-                <Text style={styles.menuItemText}>Home</Text>
-              </MenuOption>
-              <View style={styles.hr} />
-              {/* Services Links */}
-              {services.map((service) => (
-                <MenuOption
-                  key={service.key}
-                  onSelect={() => handleServiceClick(service.key)}
-                >
-                  <Text style={styles.menuItemText}>{service.name}</Text>
-                </MenuOption>
-              ))}
-              <View style={styles.hr} />
-              {/* Logout Link */}
-              <MenuOption onSelect={() => console.log("Logout")}>
-                <Text style={[styles.menuItemText, styles.logoutText]}>
-                  Logout
-                </Text>
-              </MenuOption>
-            </MenuOptions>
-          </Menu>
+          <TouchableOpacity onPress={openMenu}>
+            <Ionicons name="menu" size={30} color="#fff" />
+          </TouchableOpacity>
           <Text style={styles.title}>Accesso</Text>
         </View>
+
+        {/* Side Menu */}
+        <Animated.View
+          style={[
+            styles.sideMenu,
+            { transform: [{ translateX: menuTranslateX }] },
+          ]}
+        >
+          <TouchableOpacity onPress={closeMenu} style={styles.closeButton}>
+            <Ionicons name="close" size={30} color="#007AFF" />
+          </TouchableOpacity>
+
+          <View style={styles.menuItems}>
+            {/* Home Link */}
+            <TouchableOpacity onPress={() => handleServiceClick("home")}>
+              <Text style={styles.menuItemText}>Home</Text>
+            </TouchableOpacity>
+            <View style={styles.hr} />
+            {/* Services Links */}
+            {services.map((service) => (
+              <TouchableOpacity
+                key={service.key}
+                onPress={() => handleServiceClick(service.key)}
+              >
+                <Text style={styles.menuItemText}>{service.name}</Text>
+              </TouchableOpacity>
+            ))}
+            <View style={styles.hr} />
+            {/* Logout Link */}
+            <TouchableOpacity onPress={() => console.log("Logout")}>
+              <Text style={[styles.menuItemText, styles.logoutText]}>
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
 
         {/* Dynamic Content Area */}
         <View style={styles.contentContainer}>{renderServiceContent()}</View>
@@ -150,7 +172,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#e8e8e8", // Added background color for better contrast
+    backgroundColor: "#e8e8e8",
   },
   profileContainer: {
     justifyContent: "center",
@@ -184,12 +206,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#007AFF",
   },
-  menuOptions: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+  sideMenu: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
     width: 250,
+    backgroundColor: "#fff",
+    paddingTop: 50,
+    zIndex: 1,
+    elevation: 5, // Elevation for Android
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  menuItems: {
+    padding: 20,
   },
   menuItemText: {
     fontSize: 18,
@@ -203,12 +238,6 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: "red",
-  },
-  closeButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 1,
   },
 });
 

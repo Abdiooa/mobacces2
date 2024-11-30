@@ -5,31 +5,34 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Alert, // Import Alert for notifications
+  Alert,
 } from "react-native";
-import DemandForm from "./DemandForm"; // Import the DemandForm component
+import DemandForm from "./DemandForm"; // Component for creating a demand
+import ViewDemands from "./ViewDemands";
+import DemandDetails from "./DemandDetails";
 
 const AdminService = () => {
-  const [requests, setRequests] = useState<any[]>([]); // Array of requests
-  const [viewMode, setViewMode] = useState("menu"); // For toggling between the menu and request details
-  const [selectedRequest, setSelectedRequest] = useState<any | null>(null); // Selected request
+  const [demands, setDemands] = useState<any[]>([]); // Array of demands
+  const [viewMode, setViewMode] = useState<
+    "menu" | "create" | "view" | "details"
+  >("menu"); // Current view
+  const [selectedDemand, setSelectedDemand] = useState<any | null>(null); // Selected demand for details
 
-  const handleCreateRequest = (newRequest: {
+  // Handle creating a new demand
+  const handleCreateDemand = (newDemand: {
     id: number;
-    name: string;
+    demandName: string;
     type: string;
     requiredDocuments: string;
     demandDescription: string;
     status: string;
   }) => {
-    // Simple validation check
     if (
-      !newRequest.name ||
-      !newRequest.type ||
-      !newRequest.requiredDocuments ||
-      !newRequest.demandDescription
+      !newDemand.demandName ||
+      !newDemand.type ||
+      !newDemand.requiredDocuments ||
+      !newDemand.demandDescription
     ) {
-      // Show an error alert if any required field is missing
       Alert.alert(
         "Erreur",
         "Tous les champs doivent être remplis pour créer une demande.",
@@ -38,26 +41,54 @@ const AdminService = () => {
       return;
     }
 
-    // If validation passes, add the request to the list
-    setRequests([...requests, newRequest]);
-
-    // Show a success alert
+    setDemands([...demands, newDemand]); // Add new demand to the list
     Alert.alert("Succès", "La demande a été créée avec succès.", [
       { text: "OK" },
     ]);
-
-    setViewMode("menu"); // Go back to menu after creating request
+    setViewMode("menu"); // Return to the menu
   };
 
-  const handleSelectRequest = (request: any) => {
-    setSelectedRequest(request);
+  // Handle selecting a demand to view its details
+  const handleSelectDemand = (demand: any) => {
+    setSelectedDemand(demand);
     setViewMode("details");
+  };
+
+  // Handle editing a demand (you can add edit functionality)
+  const handleEditDemand = (demand: any) => {
+    // For now, we'll just alert that editing is not implemented.
+    Alert.alert("Edit", "Edit functionality is not implemented yet.");
+  };
+
+  // Handle deleting a demand
+  const handleDeleteDemand = (id: string) => {
+    Alert.alert(
+      "Confirmer",
+      "Êtes-vous sûr de vouloir supprimer cette demande ?",
+      [
+        { text: "Annuler" },
+        {
+          text: "Supprimer",
+          onPress: () => {
+            setDemands(demands.filter((demand) => demand.id !== id));
+            Alert.alert("Succès", "Demande supprimée avec succès.", [
+              { text: "OK" },
+            ]);
+          },
+        },
+      ]
+    );
+  };
+
+  // Handle going back to the main menu
+  const handleRetour = () => {
+    setViewMode("menu");
   };
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Menu to select options */}
+        {/* Main Menu */}
         {viewMode === "menu" && (
           <View style={styles.menuContainer}>
             <Text style={styles.title}>Choisissez une option</Text>
@@ -69,65 +100,41 @@ const AdminService = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.linkButton}
-              onPress={() => setViewMode("requests")}
+              onPress={() => setViewMode("view")}
             >
               <Text style={styles.linkText}>Consulter vos demandes</Text>
             </TouchableOpacity>
           </View>
         )}
 
-        {/* Create new request form */}
+        {/* Create Demand */}
         {viewMode === "create" && (
           <DemandForm
-            onCreateRequest={handleCreateRequest} // Pass the correct handler function
+            onCreateRequest={handleCreateDemand}
             onCancel={() => setViewMode("menu")}
           />
         )}
 
-        {/* Display all requests */}
-        {viewMode === "requests" && (
-          <View style={styles.requestsContainer}>
-            <Text style={styles.title}>Toutes vos demandes</Text>
-            {requests.length === 0 ? (
-              <Text style={styles.noRequestsText}>
-                Aucune demande n'a été créée.
-              </Text>
-            ) : (
-              requests.map((req) => (
-                <TouchableOpacity
-                  key={req.id}
-                  style={styles.requestItem}
-                  onPress={() => handleSelectRequest(req)}
-                >
-                  <Text style={styles.requestText}>{req.name}</Text>
-                  <Text style={styles.statusText}>Statut: {req.status}</Text>
-                </TouchableOpacity>
-              ))
-            )}
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setViewMode("menu")}
-            >
-              <Text style={styles.cancelButtonText}>Retour au menu</Text>
-            </TouchableOpacity>
-          </View>
+        {/* View Demands */}
+        {viewMode === "view" && (
+          <ViewDemands
+            userId="576520" // Replace with the actual user ID
+            onViewDetails={handleSelectDemand}
+            onEditDemand={handleEditDemand}
+            onDeleteDemand={handleDeleteDemand}
+          />
         )}
 
-        {/* Display selected request details */}
-        {viewMode === "details" && selectedRequest && (
-          <View style={styles.selectedRequestContainer}>
-            <Text style={styles.title}>Détails de la demande</Text>
-            <Text style={styles.detailText}>Nom: {selectedRequest.name}</Text>
-            <Text style={styles.detailText}>
-              Statut: {selectedRequest.status}
-            </Text>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setViewMode("requests")}
-            >
-              <Text style={styles.cancelButtonText}>Retour aux demandes</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Demand Details */}
+        {viewMode === "details" && selectedDemand && (
+          <DemandDetails demand={selectedDemand} onBack={handleRetour} />
+        )}
+
+        {/* Retour Button for "view" mode */}
+        {viewMode === "view" && (
+          <TouchableOpacity style={styles.retourButton} onPress={handleRetour}>
+            <Text style={styles.linkText}>Retour</Text>
+          </TouchableOpacity>
         )}
       </ScrollView>
     </View>
@@ -150,9 +157,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#007AFF",
     marginBottom: 15,
+    textAlign: "center",
   },
   linkButton: {
-    padding: 10,
+    padding: 15,
     backgroundColor: "#007AFF",
     borderRadius: 5,
     marginBottom: 10,
@@ -162,46 +170,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
   },
-  requestsContainer: {
-    marginTop: 20,
-  },
-  noRequestsText: {
-    color: "gray",
-    fontSize: 18,
-    textAlign: "center",
-  },
-  requestItem: {
+  retourButton: {
     padding: 15,
-    borderWidth: 1,
-    borderColor: "#ddd",
+    backgroundColor: "#FF6347", // A distinct color for the "Retour" button
     borderRadius: 5,
-    marginBottom: 10,
-  },
-  requestText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statusText: {
-    color: "gray",
-    fontSize: 16,
-  },
-  cancelButton: {
-    padding: 15,
-    backgroundColor: "#ddd",
-    marginTop: 20,
-    borderRadius: 5,
-  },
-  cancelButtonText: {
-    color: "#333",
-    fontSize: 18,
-    textAlign: "center",
-  },
-  selectedRequestContainer: {
-    marginTop: 20,
-  },
-  detailText: {
-    fontSize: 18,
-    marginVertical: 10,
+    marginTop: 10,
   },
 });
 

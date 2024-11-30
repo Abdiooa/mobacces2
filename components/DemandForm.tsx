@@ -13,7 +13,7 @@ import useCreateDemand from "@/hooks/useCreateDemand";
 interface DemandFormProps {
   onCreateRequest: (newRequest: {
     id: number;
-    name: string;
+    demandName: string;
     type: string;
     requiredDocuments: string;
     demandDescription: string;
@@ -26,6 +26,7 @@ const DemandForm: React.FC<DemandFormProps> = ({
   onCreateRequest,
   onCancel,
 }) => {
+  const [demandName, setDemandName] = useState(""); // New state for the name of the demand
   const [newRequest, setNewRequest] = useState(""); // This stores the demand description
   const [requestType, setRequestType] = useState("");
   const [requiredDocuments, setRequiredDocuments] = useState("");
@@ -40,7 +41,12 @@ const DemandForm: React.FC<DemandFormProps> = ({
 
   const handleCreateRequest = async () => {
     // Make sure all fields are filled
-    if (newRequest.trim() && requiredDocuments.trim() && requestType) {
+    if (
+      demandName.trim() &&
+      newRequest.trim() &&
+      requiredDocuments.trim() &&
+      requestType
+    ) {
       const userId = "576520"; // Default user ID
       const demandDescription = newRequest; // The demand description from the user input
 
@@ -48,6 +54,7 @@ const DemandForm: React.FC<DemandFormProps> = ({
         // Call the hook to send the request
         await createDemand({
           userId,
+          demandName,
           requestType,
           demandDescription, // Pass the demand description to the hook
           requiredDocuments,
@@ -55,7 +62,7 @@ const DemandForm: React.FC<DemandFormProps> = ({
 
         const request = {
           id: Math.random(), // Simulating a random ID generation
-          name: demandDescription,
+          demandName: demandName, // Use the new nameDemand field
           type: requestType,
           requiredDocuments,
           demandDescription,
@@ -63,6 +70,7 @@ const DemandForm: React.FC<DemandFormProps> = ({
         };
 
         onCreateRequest(request); // Pass the newly created request to the parent
+        setDemandName(""); // Clear the name input after success
         setNewRequest(""); // Clear input after success
         setRequestType(""); // Clear selection after success
         setRequiredDocuments(""); // Clear input after success
@@ -78,10 +86,18 @@ const DemandForm: React.FC<DemandFormProps> = ({
     <View style={styles.formContainer}>
       <Text style={styles.title}>Créer une nouvelle demande</Text>
 
+      {/* Name of the Demand */}
+      <TextInput
+        style={styles.input}
+        placeholder="Entrez le nom de la demande"
+        value={demandName}
+        onChangeText={setDemandName}
+      />
+
       {/* Demand Description TextArea */}
       <TextInput
         style={[styles.input, styles.textArea]}
-        placeholder="Entrez votre demande"
+        placeholder="Entrez votre demande description"
         value={newRequest}
         onChangeText={setNewRequest}
         multiline
