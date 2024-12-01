@@ -16,6 +16,7 @@ import {
 } from "react-native-popup-menu"; // Import MenuProvider and other components
 import AdminService from "./AdminService"; // Import the AdminService component
 import ProfSocialService from "./ProfSocialService";
+import SecUrg from "./SecurityGesUrgen";
 
 const Acceuil = ({ navigation }: { navigation: any }) => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -45,6 +46,8 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
         return <AdminService />;
       case "career":
         return <ProfSocialService />;
+      case "emergency":
+        return <SecUrg />;
       case "home":
         return (
           <View style={styles.profileContainer}>

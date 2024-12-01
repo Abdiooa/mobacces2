@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -6,8 +6,38 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import * as Speech from "expo-speech";
 
 const HomePage = ({ navigation }: { navigation: any }) => {
+  // State to manage TTS activation
+  const [isTTSEnabled, setIsTTSEnabled] = useState(true);
+
+  // Function to handle TTS playback
+  const handleSpeak = () => {
+    const text =
+      "Acceso est une application dédiée à rendre le monde numérique plus inclusif, accessible et sans barrières pour tous.  Connectez-vous avec Mobile ID ";
+    Speech.speak(text, {
+      language: "fr-FR",
+      rate: 1.0,
+    });
+  };
+
+  useEffect(() => {
+    if (isTTSEnabled) {
+      handleSpeak();
+    }
+  }, [isTTSEnabled]);
+
+  // Toggle TTS state
+  const toggleTTS = () => {
+    setIsTTSEnabled((prev) => {
+      if (prev) {
+        Speech.stop();
+      }
+      return !prev;
+    });
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-[#fdfefe]">
       {/* Top Section */}
@@ -41,7 +71,7 @@ const HomePage = ({ navigation }: { navigation: any }) => {
           onPress={() => navigation.navigate("LoginId")}
         >
           <Text className="text-white text-lg font-semibold">
-            Connect with Mobile ID
+            Connectez-vous avec Mobile ID
           </Text>
         </TouchableOpacity>
 
@@ -53,8 +83,19 @@ const HomePage = ({ navigation }: { navigation: any }) => {
           <TouchableOpacity className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center">
             <Text className="text-lg font-bold text-gray-600">👁‍🗨</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center">
-            <Text className="text-lg font-bold text-gray-600">🔊</Text>
+          <TouchableOpacity
+            className={`${
+              isTTSEnabled ? "bg-blue-600" : "bg-gray-200"
+            } w-12 h-12 rounded-full flex items-center justify-center`}
+            onPress={toggleTTS} // Toggle TTS state
+          >
+            <Text
+              className={`text-lg font-bold ${
+                isTTSEnabled ? "text-white" : "text-gray-600"
+              }`}
+            >
+              🔊
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
