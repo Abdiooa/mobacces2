@@ -13,7 +13,8 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.saad2000.mobaccess2"
     },
     "web": {
       "bundler": "metro",
@@ -24,6 +25,11 @@
       "image": "./assets/images/spa5.jpeg",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e65b2776-2867-4d5f-aba1-e9d3a2ce0fe0"
+      }
     }
   }
 }

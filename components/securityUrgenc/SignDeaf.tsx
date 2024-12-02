@@ -44,10 +44,13 @@ const Icon = () => {
       const loc = await getLocation();
       if (!loc) return;
 
-      const response = await axios.post("http://192.168.1.29:3000/send-sms", {
-        type: type,
-        location: loc,
-      });
+      const response = await axios.post(
+        "http://192.168.177.157:3000/send-sms",
+        {
+          type: type,
+          location: loc,
+        }
+      );
 
       if (response.status === 200) {
         alert(`${type} alert sent successfully!`);

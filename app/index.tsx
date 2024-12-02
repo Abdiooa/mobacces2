@@ -11,6 +11,9 @@ import Sans from "@/components/Sans";
 import MobileIDAuth from "@/components/MobileIDAuth";
 import Acceuil from "@/components/Acceuil";
 
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 const Stack = createStackNavigator();
 
 export default function Index() {

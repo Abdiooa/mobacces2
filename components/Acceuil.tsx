@@ -16,6 +16,7 @@ import {
 } from "react-native-popup-menu"; // Import MenuProvider and other components
 import AdminService from "./AdminService"; // Import the AdminService component
 import SignDeaf from "../components/securityUrgenc/SignDeaf";
+import Scan from "../components/securityUrgenc/Scan";
 
 const Acceuil = ({ navigation }: { navigation: any }) => {
   const [selectedService, setSelectedService] = useState<string | null>(null);
@@ -30,6 +31,7 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
     { name: "Sécurité et gestion des urgences", key: "emergency" },
     { name: "Communication et soutien social", key: "social" },
     { name: "Éducation et sensibilisation", key: "education" },
+    { name: "Detection d'objets", key: "scan" },
   ];
 
   // Function to handle service selection
@@ -43,6 +45,8 @@ const Acceuil = ({ navigation }: { navigation: any }) => {
     switch (selectedService) {
       case "emergency":
         return <SignDeaf />;
+      case "scan":
+        return <Scan />;
       case "admin":
         return <AdminService />;
       case "home":

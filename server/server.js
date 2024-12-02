@@ -55,5 +55,5 @@ app.post("/send-sms", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://192.168.1.29:${port}`);
+  console.log(`Server is running on http://192.168.177.157:${port}`);
 });
