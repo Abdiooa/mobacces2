@@ -6,10 +6,13 @@ const useDeleteApplication = () => {
     const [error, setError] = useState<string | null>(null);
 
     const deleteApplication = async (id: string) => {
+        console.log("delete application entered");
+        console.log(id);
         setLoading(true);
         setError(null);
         try {
-            await apiRequest(`/applications/${id}`, 'DELETE');
+            const response = await apiRequest(`/applications/${id}`, 'DELETE');
+            console.log(response);
         } catch (err: any) {
             setError(err.message);
         } finally {

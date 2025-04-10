@@ -1,19 +1,17 @@
 import React, { useState } from "react";
 import useFetchApplicationsByUser from "../hooks/useFetchApplicationsByUser";
 import useDeleteApplication from "../hooks/useDeleteApplication";
-import useFetchApplicationById from "../hooks/useFetchApplicationById";
+import ApplicationDetails from "./ApplicationDetails"; // Import the details component
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 
 const ViewUserApplications: React.FC<{ userId: string }> = ({ userId }) => {
-  const { data, loading, error } = useFetchApplicationsByUser(userId);
+  const { data, loading, error, refetch } = useFetchApplicationsByUser(userId);
   const {
     deleteApplication,
     loading: deleteLoading,
     error: deleteError,
   } = useDeleteApplication();
-  const [selectedApplicationId, setSelectedApplicationId] = useState<
-    string | null
-  >(null);
+  const [selectedApplication, setSelectedApplication] = useState(null); // Track selected application
 
   const handleDelete = async (id: string) => {
     Alert.alert(
@@ -26,15 +24,24 @@ const ViewUserApplications: React.FC<{ userId: string }> = ({ userId }) => {
           style: "destructive",
           onPress: async () => {
             await deleteApplication(id);
-            Alert.alert("Success", "Application deleted successfully.");
+            if (!deleteError) {
+              Alert.alert("Success", "Application deleted successfully.");
+              refetch(); // Refetch applications after deletion
+            } else {
+              Alert.alert("Error", "Failed to delete the application.");
+            }
           },
         },
       ]
     );
   };
 
-  const handleViewDetails = (id: string) => {
-    setSelectedApplicationId(id);
+  const handleViewDetails = (application: any) => {
+    setSelectedApplication(application); // Store the selected application details
+  };
+
+  const handleBack = () => {
+    setSelectedApplication(null); // Reset to show the list of applications
   };
 
   if (loading) {
@@ -45,6 +52,17 @@ const ViewUserApplications: React.FC<{ userId: string }> = ({ userId }) => {
     return <Text>Error: {error}</Text>;
   }
 
+  // If an application is selected, show its details
+  if (selectedApplication) {
+    return (
+      <ApplicationDetails
+        application={selectedApplication}
+        onBack={handleBack}
+      />
+    );
+  }
+
+  // Show the list of applications
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Your Applications</Text>
@@ -63,7 +81,7 @@ const ViewUserApplications: React.FC<{ userId: string }> = ({ userId }) => {
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 style={styles.viewDetailsButton}
-                onPress={() => handleViewDetails(application._id)}
+                onPress={() => handleViewDetails(application)} // Pass application data
               >
                 <Text style={styles.buttonText}>View Details</Text>
               </TouchableOpacity>
@@ -85,35 +103,6 @@ const ViewUserApplications: React.FC<{ userId: string }> = ({ userId }) => {
           No applications found for this user.
         </Text>
       )}
-
-      {selectedApplicationId && (
-        <ViewApplicationDetails id={selectedApplicationId} />
-      )}
-    </View>
-  );
-};
-
-const ViewApplicationDetails: React.FC<{ id: string }> = ({ id }) => {
-  const { data, loading, error } = useFetchApplicationById(id);
-
-  if (loading) return <Text>Loading application details...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
-
-  return (
-    <View style={styles.detailsContainer}>
-      <Text style={styles.detailsHeader}>Application Details</Text>
-      <Text style={styles.detailsText}>Job ID: {data?.jobId}</Text>
-      <Text style={styles.detailsText}>
-        Cover Letter: {data?.coverLetter || "No cover letter provided."}
-      </Text>
-      <Text style={styles.detailsText}>
-        Resume:{" "}
-        {data?.resumeLink ? (
-          <Text style={styles.linkText}>View Resume</Text>
-        ) : (
-          "No resume uploaded."
-        )}
-      </Text>
     </View>
   );
 };
@@ -184,31 +173,6 @@ const styles = StyleSheet.create({
   noApplicationsText: {
     textAlign: "center",
     color: "#555",
-  },
-  detailsContainer: {
-    marginTop: 20,
-    padding: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  detailsHeader: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-    color: "#007AFF",
-  },
-  detailsText: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 10,
-  },
-  linkText: {
-    color: "#007AFF",
-    textDecorationLine: "underline",
   },
 });
 

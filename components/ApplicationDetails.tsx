@@ -37,6 +37,7 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
           Lettre de motivation: {application.coverLetter}
         </Text>
       )}
+
       {application.resumeLink ? (
         <Text style={styles.detailText}>
           CV: <Text style={styles.linkText}>Voir le CV</Text>
@@ -55,33 +56,23 @@ const ApplicationDetails: React.FC<ApplicationDetailsProps> = ({
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#f9f9f9" },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#007AFF",
-    marginBottom: 20,
-    textAlign: "center",
+    marginBottom: 15,
   },
-  detailText: {
-    fontSize: 18,
-    marginBottom: 12,
-    color: "#333",
-  },
+  detailText: { fontSize: 18, marginBottom: 10 },
   linkText: {
     color: "#007AFF",
     textDecorationLine: "underline",
   },
   backButton: {
     backgroundColor: "#007AFF",
-    padding: 12,
-    borderRadius: 8,
+    padding: 10,
+    borderRadius: 5,
     marginTop: 20,
   },
-  backButtonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  backButtonText: { color: "#fff", textAlign: "center" },
 });
 
 export default ApplicationDetails;

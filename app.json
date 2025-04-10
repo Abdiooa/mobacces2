@@ -21,7 +21,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "splash": {
-      "image": "./assets/images/spa5.jpeg",
+      "image": "./assets/images/spa7.jpeg",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     }

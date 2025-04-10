@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
+  ScrollView,
   StyleSheet,
+  Alert,
+  TextInput,
   FlatList,
   ActivityIndicator,
-  TextInput,
-  Alert,
 } from "react-native";
-import useJobs from "../hooks/useJobs"; // Import the custom hook for fetching jobs
-import useCreateApplication from "../hooks/useCreateApplication"; // Import the hook to create applications
-import ViewUserApplications from "./ViewUserApplications"; // Import the component to view user applications
+import useJobs from "../hooks/useJobs"; // Custom hook for fetching jobs
+import useCreateApplication from "../hooks/useCreateApplication"; // Hook for creating applications
+import ViewUserApplications from "./ViewUserApplications"; // Component for viewing user applications
 
 const ProfSocialService = () => {
-  const { getJobs, jobs, loading, error } = useJobs(); // Fetch jobs from API or mock data
+  const { getJobs, jobs, loading, error } = useJobs(); // Fetch jobs
   const {
     createApplication,
     loading: applying,
     error: applyError,
-  } = useCreateApplication(); // Handle the application creation
+  } = useCreateApplication(); // Handle application creation
   const [viewMode, setViewMode] = useState<"menu" | "jobs" | "applications">(
     "menu"
   );
@@ -27,12 +28,12 @@ const ProfSocialService = () => {
 
   useEffect(() => {
     if (viewMode === "jobs") {
-      getJobs(); // Fetch jobs when navigating to the job list
+      getJobs(); // Fetch jobs when in "jobs" view
     }
   }, [viewMode, getJobs]);
 
   const handleApply = async (jobId: string) => {
-    const userId = "567520"; // Placeholder user ID
+    const userId = "567520"; // Placeholder for user ID
 
     try {
       await createApplication({ userId, jobId });
@@ -49,6 +50,18 @@ const ProfSocialService = () => {
     }
   };
 
+  const handleSearch = () => {
+    const filteredJobs = jobs.filter((job) =>
+      job.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchQuery(""); // Reset search query
+    if (filteredJobs.length > 0) {
+      Alert.alert("Search", `Found ${filteredJobs.length} job(s)`);
+    } else {
+      Alert.alert("Search", "No jobs found.");
+    }
+  };
+
   const renderJobItem = ({ item }: { item: any }) => (
     <View style={styles.jobItem}>
       <Text style={styles.jobTitle}>{item.title}</Text>
@@ -57,7 +70,7 @@ const ProfSocialService = () => {
       <TouchableOpacity
         style={styles.applyButton}
         onPress={() => handleApply(item._id)}
-        disabled={applying} // Disable button while applying
+        disabled={applying}
       >
         <Text style={styles.applyButtonText}>
           {applying ? "Applying..." : "Apply"}
@@ -65,19 +78,6 @@ const ProfSocialService = () => {
       </TouchableOpacity>
     </View>
   );
-
-  const handleSearch = () => {
-    // Filter jobs based on search query
-    const filteredJobs = jobs.filter((job) =>
-      job.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setSearchQuery(""); // Clear the search input
-    if (filteredJobs.length > 0) {
-      Alert.alert("Search", `Found ${filteredJobs.length} job(s)`);
-    } else {
-      Alert.alert("Search", "No jobs found.");
-    }
-  };
 
   if (loading) {
     return (
@@ -95,8 +95,13 @@ const ProfSocialService = () => {
     );
   }
 
+  const handleRetour = () => {
+    setViewMode("menu");
+  };
+
   return (
     <View style={styles.container}>
+      {/* Main Menu */}
       {viewMode === "menu" && (
         <View style={styles.menuContainer}>
           <Text style={styles.header}>Choose an Option</Text>
@@ -115,12 +120,10 @@ const ProfSocialService = () => {
         </View>
       )}
 
+      {/* Jobs List */}
       {viewMode === "jobs" && (
         <View>
-          <TouchableOpacity
-            style={styles.retourButton}
-            onPress={() => setViewMode("menu")}
-          >
+          <TouchableOpacity style={styles.retourButton} onPress={handleRetour}>
             <Text style={styles.linkText}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.header}>Job Opportunities</Text>
@@ -143,14 +146,31 @@ const ProfSocialService = () => {
         </View>
       )}
 
+      {/* User Applications */}
       {viewMode === "applications" && <ViewUserApplications userId="567520" />}
+
+      {/* Retour Button for "view" mode */}
+      {viewMode === "applications" && (
+        <TouchableOpacity style={styles.retourButton} onPress={handleRetour}>
+          <Text style={styles.linkText}>Retour</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 20 },
-  menuContainer: { marginTop: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 20,
+  },
+  scrollContainer: {
+    paddingBottom: 20,
+  },
+  menuContainer: {
+    marginTop: 20,
+  },
   header: {
     fontSize: 24,
     fontWeight: "bold",
@@ -164,7 +184,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10,
   },
-  linkText: { color: "#fff", textAlign: "center", fontSize: 18 },
+  linkText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 18,
+  },
   jobItem: {
     backgroundColor: "#f5f5f5",
     padding: 15,
@@ -175,9 +199,18 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
-  jobTitle: { fontSize: 18, fontWeight: "bold" },
-  jobCompany: { fontSize: 16, color: "#555" },
-  jobLocation: { fontSize: 14, color: "#777" },
+  jobTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  jobCompany: {
+    fontSize: 16,
+    color: "#555",
+  },
+  jobLocation: {
+    fontSize: 14,
+    color: "#777",
+  },
   applyButton: {
     marginTop: 10,
     backgroundColor: "#007AFF",
@@ -185,7 +218,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
   },
-  applyButtonText: { color: "#fff", fontWeight: "bold" },
+  applyButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   retourButton: {
     marginTop: 10,
     backgroundColor: "#FF6347",
@@ -205,8 +241,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
   },
-  searchButtonText: { color: "#fff", fontWeight: "bold" },
-  errorText: { color: "red", textAlign: "center" },
+  searchButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+  },
 });
 
 export default ProfSocialService;

@@ -107,11 +107,11 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   logoContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: "center",
   },
   logo: {
-    width: 100,
+    width: 170,
     height: 100,
     resizeMode: "contain",
   },

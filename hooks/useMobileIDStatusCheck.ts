@@ -22,14 +22,14 @@ const useMobileIDStatusCheck = () => {
       const response = await axios.request(options);
       console.log(response.data);
       //|| response.data.code == 801
-      if (response.data.code === 800 || response.data.code == 801) {
+      if (response.data.code === 800) {
         return true;
       }
       if (response.data.code !== 801) {
         // return true;
         throw new Error(response.data.message || "Status check failed.");
       }
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   };
 
